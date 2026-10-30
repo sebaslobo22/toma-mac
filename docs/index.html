@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Toma</title>
+<meta name="description" content="Toma es un teleprompter y grabadora de voz para Mac. Sigue tu voz mientras lees y deja el audio listo para editar. Gratis, sin cuentas y todo en tu Mac.">
+<meta name="theme-color" content="#0d0d0d">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/icono.png">
+<link rel="canonical" href="https://sebaslobo22.github.io/toma-mac/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Toma">
+<meta property="og:title" content="Toma: lee, graba y deja el audio listo">
+<meta property="og:description" content="Teleprompter y grabadora de voz para Mac. Sigue tu voz mientras lees y deja el audio listo para editar. Gratis y sin cuentas.">
+<meta property="og:url" content="https://sebaslobo22.github.io/toma-mac/">
+<meta property="og:image" content="https://sebaslobo22.github.io/toma-mac/img/icono.png">
+<meta property="og:image:alt" content="Ícono de Toma: líneas de texto con una palabra resaltada en amarillo y un botón rojo de grabar">
+<meta name="twitter:card" content="summary">
+<style>
+/* Mismo sistema que la página de rendimiento-equipo: tokens oscuros primero, claros bajo prefers-color-scheme,
+   [data-theme] para forzar uno, tipografía del sistema y la curva .32,.72,0,1. El acento es el amarillo de Toma. */
+:root{
+  color-scheme:dark;
+  --bg:#0d0d0d; --bg-alt:#111111; --panel:#171717; --panel-2:#212121; --panel-3:#2b2b2b;
+  --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.15);
+  --text:#ececec; --text-2:#b4b4b4; --text-3:#9a9a9a; --text-4:#5d5d5d;
+  --accent:#f9cc3d; --accent-text:#f9cc3d; --on-accent:#1a1400; --focus:#f9cc3d;
+  --ok:#42dec2; --warn:#fee096; --bad:#ff8a7a; --rec:#ff5441;
+  --glow-1:rgba(249,204,61,.14); --glow-2:rgba(255,84,65,.08);
+  --shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.06);
+  --nav-bg:rgba(28,28,28,.7);
+  --grad-a:#ffffff; --grad-b:#8a8a8a;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",system-ui,sans-serif;
+  --mono:ui-monospace,"SFMono-Regular","SF Mono",Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.32,.72,0,1);
+  --gut:clamp(16px,4vw,48px);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    color-scheme:light;
+    --bg:#ffffff; --bg-alt:#f5f5f7; --panel:#f9f9f9; --panel-2:#efefef; --panel-3:#e3e3e3;
+    --line:rgba(0,0,0,.08); --line-2:rgba(0,0,0,.14);
+    --text:#0d0d0d; --text-2:#545454; --text-3:#6b6b6b; --text-4:#b4b4b4;
+    --accent:#f9cc3d; --accent-text:#7a5600; --on-accent:#1a1400; --focus:#7a5600;
+    --ok:#055f51; --warn:#7d3f09; --bad:#ab1616; --rec:#d93a28;
+    --glow-1:rgba(249,204,61,.28); --glow-2:rgba(255,84,65,.08);
+    --shadow:0 40px 80px rgba(0,0,0,.16),0 0 0 1px rgba(0,0,0,.06);
+    --nav-bg:rgba(255,255,255,.72);
+    --grad-a:#0d0d0d; --grad-b:#8f8f8f;
+  }
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#ffffff; --bg-alt:#f5f5f7; --panel:#f9f9f9; --panel-2:#efefef; --panel-3:#e3e3e3;
+  --line:rgba(0,0,0,.08); --line-2:rgba(0,0,0,.14);
+  --text:#0d0d0d; --text-2:#545454; --text-3:#6b6b6b; --text-4:#b4b4b4;
+  --accent:#f9cc3d; --accent-text:#7a5600; --on-accent:#1a1400; --focus:#7a5600;
+  --ok:#055f51; --warn:#7d3f09; --bad:#ab1616; --rec:#d93a28;
+  --glow-1:rgba(249,204,61,.28); --glow-2:rgba(255,84,65,.08);
+  --shadow:0 40px 80px rgba(0,0,0,.16),0 0 0 1px rgba(0,0,0,.06);
+  --nav-bg:rgba(255,255,255,.72);
+  --grad-a:#0d0d0d; --grad-b:#8f8f8f;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--text);font:400 17px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:8px}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{text-wrap:balance}
+svg.i{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:1180px;margin-inline:auto;padding-left:max(var(--gut),env(safe-area-inset-left,0px));padding-right:max(var(--gut),env(safe-area-inset-right,0px))}
+.grad{background:linear-gradient(100deg,var(--grad-a) 30%,var(--grad-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kicker{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);display:inline-flex;align-items:center;gap:8px}
+.kicker svg.i{width:16px;height:16px;color:var(--accent-text)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none!important}
+
+/* Fondo vivo */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.ambient i{position:absolute;width:60vmax;height:60vmax;border-radius:50%;filter:blur(40px)}
+.ambient i:nth-child(1){left:-18vmax;top:-26vmax;background:radial-gradient(closest-side,var(--glow-1),transparent);animation:drift 22s var(--ease) infinite alternate}
+.ambient i:nth-child(2){right:-22vmax;top:8vmax;background:radial-gradient(closest-side,var(--glow-2),transparent);animation:drift 28s var(--ease) infinite alternate-reverse}
+@keyframes drift{to{transform:translate3d(6vmax,5vmax,0) scale(1.08)}}
+main,.nav,footer{position:relative;z-index:1}
+
+/* Navegación en píldora */
+.nav{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:var(--nav-bg);border:1px solid var(--line-2);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);max-width:calc(100vw - 24px)}
+.brand{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 4px;color:var(--text);font-weight:650;font-size:15px;white-space:nowrap}
+.brand:hover{text-decoration:none}
+.brand img{width:28px;height:28px;border-radius:8px;display:block}
+.links{position:relative;display:flex}
+.links a{position:relative;z-index:1;padding:7px 13px;font-size:13.5px;color:var(--text-2);border-radius:999px;white-space:nowrap;transition:color .3s var(--ease)}
+.links a:hover{text-decoration:none;color:var(--text)}
+.links a.on{color:var(--text)}
+.links .ind{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:999px;background:var(--panel-3);transition:transform .45s var(--ease),width .45s var(--ease),opacity .3s;opacity:0}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;font-weight:550;font-size:15px;padding:12px 22px;border:1px solid transparent;cursor:pointer;transition:transform .35s var(--ease),background-color .3s,border-color .3s;white-space:nowrap;font-family:var(--sans)}
+.btn:hover{text-decoration:none;transform:translateY(-1px)}
+.btn svg.i{width:17px;height:17px}
+.btn.pri{background:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line-2)}
+.btn.ghost:hover{border-color:var(--text-3)}
+.nav .btn{padding:8px 15px;font-size:13.5px}
+@media (max-width:980px){.links{display:none}}
+
+/* Portada */
+.hero{padding-top:calc(124px + env(safe-area-inset-top,0px));text-align:center;overflow:hidden}
+.hero-txt{display:flex;flex-direction:column;align-items:center;gap:22px;will-change:transform,opacity}
+.app-ico{width:84px;height:84px;border-radius:22px;display:block;box-shadow:0 18px 40px rgba(0,0,0,.35),0 0 0 1px var(--line)}
+.tag{display:inline-flex;align-items:center;gap:10px;padding:6px 14px 6px 10px;border-radius:999px;border:1px solid var(--line-2);background:var(--panel);color:var(--text-2);font-size:13.5px}
+.tag .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 20%,transparent)}
+h1{font-size:clamp(2.7rem,1rem + 6.6vw,6.4rem);font-weight:650;letter-spacing:-.045em;line-height:1.02;max-width:11ch}
+.sub{max-width:34em;color:var(--text-2);font-size:clamp(1.05rem,.95rem + .4vw,1.3rem);line-height:1.5}
+.sub b{color:var(--text);font-weight:600}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.ver{font-size:13.5px;color:var(--text-3);min-height:1.5em}
+.hero-stage{position:relative;margin:clamp(40px,6vw,76px) auto 0;max-width:1060px;perspective:1800px}
+
+/* Ventana de Toma (todo en HTML y CSS) */
+.win{position:relative;z-index:2;text-align:left;border-radius:14px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden;transform-origin:50% 0;will-change:transform}
+.win-bar{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--bg-alt)}
+.win-bar i{width:12px;height:12px;border-radius:50%;background:#ff5f57}
+.win-bar i:nth-child(2){background:#febc2e}.win-bar i:nth-child(3){background:#28c840}
+.win-bar span{flex:1;text-align:center;font-size:13px;color:var(--text-3);margin-right:52px}
+.win-body{display:grid;grid-template-columns:230px minmax(0,1fr);height:470px}
+.side{border-right:1px solid var(--line);padding:14px 10px;display:grid;align-content:start;gap:2px;background:var(--bg-alt);font-size:13.5px}
+.side-h{font-size:11.5px;color:var(--text-3);padding:4px 10px;font-weight:600;letter-spacing:.04em}
+.side-it{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side-it svg.i{width:15px;height:15px;color:var(--text-3)}
+.side-it.sub-it{margin-left:14px}
+.side-it.on{background:var(--panel-3);color:var(--text)}
+.side-it.on svg.i{color:var(--accent-text)}
+.side-it .n{color:var(--text-3);font-size:12px}
+.tp{position:relative;background:#000;color:#fff;overflow:hidden;min-width:0;display:flex;align-items:center;padding:34px clamp(22px,4vw,54px) 96px}
+.tp-text{font-size:clamp(1.15rem,.55rem + 2.2vw,2.15rem);font-weight:600;line-height:1.5;letter-spacing:-.015em;display:grid;gap:.7em;width:100%;color:#fff;text-wrap:pretty}
+.tp-text p{margin:0}
+.w{padding:.02em .13em;margin:0 -.03em;border-radius:.24em}
+.w.done{color:#868686}
+.w.cur{background:#f9cc3d;color:#1a1400}
+.crumb{display:none;position:absolute;left:18px;top:14px;font-size:12px;color:#8a8a8a;letter-spacing:.01em}
+.tp-dots{position:absolute;right:14px;top:50%;transform:translateY(-50%);display:grid;gap:9px}
+.tp-dots i{width:7px;height:7px;border-radius:50%;background:#3a3a3a;transition:background-color .3s}
+.tp-dots i.on{background:#f9cc3d}
+.tp-dots i.past{background:#8a8a8a}
+.glass{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:6px;padding:7px;border-radius:999px;background:rgba(60,60,64,.55);border:1px solid rgba(255,255,255,.18);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);box-shadow:0 14px 34px rgba(0,0,0,.5);color:#f2f2f2;font-size:13px;white-space:nowrap;max-width:calc(100% - 20px)}
+.g-mic{display:flex;align-items:center;gap:9px;padding:0 12px 0 8px}
+.g-mic svg.i{width:17px;height:17px;color:#d9d9d9}
+.lvl{width:46px;height:6px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.lvl i{display:block;height:100%;width:62%;border-radius:99px;background:#42dec2;transform-origin:0 50%;animation:lvl 1.1s ease-in-out infinite alternate}
+.lvl i{animation-name:lvl}
+@keyframes lvl{0%{transform:scaleX(.45)}35%{transform:scaleX(.95)}60%{transform:scaleX(.6)}100%{transform:scaleX(.85)}}
+.g-ok{color:#42dec2;font-weight:600}
+.g-rec{display:inline-flex;align-items:center;gap:8px;background:#e5382a;color:#fff;border-radius:999px;padding:8px 15px;font-weight:600}
+.g-vel{padding:0 14px 0 10px;color:#cfcfcf}
+.paused .lvl i,.paused .eq i{animation-play-state:paused}
+.float{position:absolute;z-index:3;will-change:transform}
+.float .card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--nav-bg);border:1px solid var(--line-2);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);box-shadow:0 18px 40px rgba(0,0,0,.25);text-align:left;animation:bob 7s var(--ease) infinite alternate}
+.float:nth-of-type(2) .card{animation-delay:-2s}.float:nth-of-type(3) .card{animation-delay:-4s}.float:nth-of-type(4) .card{animation-delay:-6s}
+@keyframes bob{to{transform:translateY(-10px)}}
+.ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--c);flex:none}
+.float small{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);font-weight:600}
+.float b{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.f1{left:-4%;top:14%}.f2{right:-5%;top:6%}.f3{left:-5%;bottom:14%}.f4{right:-3%;bottom:5%}
+@media (max-width:1100px){.f1,.f3{left:-1%}.f2,.f4{right:-1%}}
+@media (max-width:760px){
+  .win-body{grid-template-columns:1fr;height:400px}.side{display:none}
+  .f1,.f2,.f3,.f4{display:none}.crumb{display:block}
+  .tp{padding:22px 18px 84px}.tp-text{font-size:1.18rem}
+  .glass{bottom:12px;gap:2px;padding:5px;font-size:12px}.g-mic{padding:0 8px 0 6px;gap:7px}.g-vel{display:none}.g-rec{padding:7px 12px}
+  .hero{padding-bottom:20px}
+}
+
+/* Secciones */
+.sec{padding-block:clamp(84px,11vw,150px)}
+.head{display:grid;justify-items:center;text-align:center;gap:18px;margin-bottom:clamp(36px,5vw,64px)}
+h2{font-size:clamp(2.1rem,1.1rem + 3.8vw,4rem);font-weight:650;letter-spacing:-.04em;line-height:1.04;max-width:16ch}
+.head p{max-width:38em;color:var(--text-2);font-size:clamp(1rem,.95rem + .3vw,1.18rem)}
+.morph{--r:1;transform:translate3d(0,calc((1 - var(--r)) * 60px),0) scale(calc(.92 + .08 * var(--r)));opacity:calc(.15 + .85 * var(--r));will-change:transform,opacity}
+.card{border-radius:28px;background:var(--panel);border:1px solid var(--line);padding:clamp(18px,2.6vw,30px);display:grid;gap:14px;align-content:start;min-width:0}
+.card h3{font-size:clamp(1.1rem,1rem + .4vw,1.4rem);font-weight:620;letter-spacing:-.02em}
+.card p{color:var(--text-2);font-size:15.5px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:11px}
+.checks li{display:flex;gap:11px;align-items:flex-start;font-size:15.5px;color:var(--text-2)}
+.checks svg.i{width:18px;height:18px;color:var(--ok);margin-top:3px;flex:none;stroke-width:2}
+.checks b{color:var(--text);font-weight:600}
+
+/* Sigue tu voz */
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(20px,3vw,40px);align-items:center}
+.split .card.big{padding:clamp(20px,3vw,34px)}
+.mini-tp{position:relative;border-radius:22px;background:#000;color:#fff;overflow:hidden;box-shadow:var(--shadow)}
+.mini-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid #1d1d1d;font-size:12.5px;color:#9a9a9a}
+.chip-off{display:inline-flex;align-items:center;gap:7px;padding:4px 10px;border-radius:99px;border:1px solid #333;color:#d4d4d4;font-size:12px}
+.chip-off svg.i{width:14px;height:14px;color:#42dec2}
+.eq{display:inline-flex;align-items:center;gap:3px;height:20px}
+.eq i{width:3px;height:100%;border-radius:2px;background:#42dec2;transform-origin:50% 50%;animation:eq .9s ease-in-out infinite alternate}
+.eq i:nth-child(2){animation-delay:-.2s}.eq i:nth-child(3){animation-delay:-.5s}.eq i:nth-child(4){animation-delay:-.1s}.eq i:nth-child(5){animation-delay:-.7s}
+@keyframes eq{0%{transform:scaleY(.2)}100%{transform:scaleY(1)}}
+.mini-body{padding:30px clamp(18px,3vw,34px) 34px}
+.mini-body .tp-text{font-size:clamp(1.3rem,.9rem + 1.6vw,2.1rem)}
+.mini-foot{padding:0 16px 16px;display:flex;justify-content:center}
+.mini-foot .glass{position:static;transform:none}
+
+/* Una toma */
+.takes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,3vw,40px);align-items:center}
+.script{border-radius:24px;background:var(--panel);border:1px solid var(--line);padding:clamp(14px,2vw,22px);display:grid;gap:10px}
+.srow{--fill:0;position:relative;display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:12px;padding:14px 14px;border-radius:16px;background:var(--panel-2);border:1px solid transparent;overflow:hidden;transition:border-color .3s,background-color .3s}
+.srow::before{content:"";position:absolute;inset:0 auto 0 0;width:calc(var(--fill) * 100%);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.srow>*{position:relative}
+.sdot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--panel-3);color:var(--text-3);font-weight:650;font-size:14px;transition:background-color .3s,color .3s}
+.stx{font-size:15.5px;color:var(--text);line-height:1.35}
+.stag{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;white-space:nowrap;opacity:0;transition:opacity .3s}
+.srow[data-s="read"]{border-color:color-mix(in srgb,var(--accent) 60%,transparent)}
+.srow[data-s="read"] .sdot{background:var(--accent);color:var(--on-accent)}
+.srow[data-s="ok"] .sdot{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok)}
+.srow[data-s="ok"] .stag{opacity:1;color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.srow[data-s="err"]{border-color:color-mix(in srgb,var(--bad) 60%,transparent)}
+.srow[data-s="err"] .sdot{background:color-mix(in srgb,var(--bad) 22%,transparent);color:var(--bad)}
+.srow[data-s="err"] .stag{opacity:1;color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.srow[data-s="rep"] .stag{opacity:1;color:var(--accent-text);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.srow[data-s="rep"]{border-color:color-mix(in srgb,var(--accent) 60%,transparent)}
+.srow[data-s="rep"] .sdot{background:var(--accent);color:var(--on-accent)}
+.take-done{display:flex;align-items:center;gap:10px;justify-content:center;padding:12px;border-radius:16px;border:1px dashed var(--line-2);color:var(--text-3);font-size:14px;transition:color .3s,border-color .3s}
+.take-done.on{color:var(--ok);border-color:var(--ok)}
+.take-done svg.i{width:18px;height:18px}
+@media (max-width:900px){.split,.takes{grid-template-columns:1fr}}
+
+/* Pulido automático: escena fija, el scroll dirige el antes y el después */
+.pul{position:relative;height:340vh}
+.pul-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;padding-top:62px}
+.pul-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,56px);align-items:center;width:100%}
+.pul-h{display:grid;gap:14px;margin-bottom:24px;justify-items:start}
+.pul-h h2{font-size:clamp(1.9rem,1rem + 2.8vw,3.2rem);max-width:none;text-align:left}
+.pul-h p{color:var(--text-2);font-size:16px}
+.stages{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.stg{display:grid;grid-template-columns:36px minmax(0,1fr);gap:2px 14px;padding:9px 0;opacity:.45;transition:opacity .45s var(--ease)}
+.stg.on{opacity:1}
+.stg .dot{grid-row:span 2;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line-2);color:var(--text-3);transition:all .45s var(--ease)}
+.stg.on .dot,.stg.past .dot{border-color:var(--accent);color:var(--accent-text);background:color-mix(in srgb,var(--accent) 12%,var(--bg))}
+.stg.past{opacity:.8}
+.stg .dot svg.i{width:17px;height:17px}
+.stg h3{font-size:17px;font-weight:600}
+.stg p{color:var(--text-2);font-size:14.5px;max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
+.stg.on p{max-height:6em}
+.wave-card{border-radius:26px;background:var(--panel);border:1px solid var(--line);padding:clamp(14px,2vw,22px);display:grid;gap:14px;box-shadow:var(--shadow);min-width:0}
+.wave-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.state{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:5px 12px;border-radius:99px;background:var(--panel-2);color:var(--text-2);transition:background-color .4s,color .4s}
+.state.ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.state::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.sw{display:inline-flex;gap:2px;padding:3px;border-radius:99px;background:var(--panel-2)}
+.sw button{font:500 12.5px var(--sans);color:var(--text-2);background:transparent;border:0;padding:6px 12px;border-radius:99px;cursor:pointer}
+.sw button[aria-pressed="true"]{background:var(--panel-3);color:var(--text)}
+.wave{--k:0;position:relative;height:clamp(120px,22vh,200px);display:flex;align-items:center;justify-content:center;border-radius:16px;background:var(--bg-alt);border:1px solid var(--line);padding:0 10px;overflow:hidden}
+.wave::after{content:"";position:absolute;left:10px;right:10px;top:50%;height:1px;background:var(--line)}
+.bar{position:relative;flex:0 0 6px;min-width:0;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bar i{position:absolute;left:18%;right:18%;top:50%;border-radius:99px;transform:translateY(-50%)}
+.bar .nz{background:color-mix(in srgb,var(--text-3) 55%,transparent)}
+.bar .vc{background:color-mix(in srgb,var(--accent) calc(var(--k) * 100%),var(--text-2));z-index:1}
+.bar.mk .vc{background:var(--bad)}
+.wave-legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--text-3)}
+.wave-legend span{display:inline-flex;align-items:center;gap:6px}
+.wave-legend i{width:14px;height:6px;border-radius:99px}
+.meters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mt{padding:12px 14px;border-radius:16px;background:var(--panel-2);display:grid;gap:8px;min-width:0}
+.mt-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;color:var(--text-3)}
+.mt-h b{font-size:15px;font-weight:650;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mt-h b.ok{color:var(--ok)}
+.trk{position:relative;height:8px;border-radius:99px;background:var(--panel-3)}
+.trk i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--text-3)}
+.trk .mkr{position:absolute;top:-4px;width:4px;height:16px;border-radius:2px;background:var(--accent);inset:auto;left:0;opacity:0;transform:translateX(-50%)}
+.targets{display:flex;flex-wrap:wrap;gap:6px}
+.tg{font:500 12.5px var(--sans);color:var(--text-2);background:transparent;border:1px solid var(--line-2);padding:5px 10px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.tg:hover{color:var(--text);border-color:var(--text-3)}
+.tg[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.ill{font-size:12px;color:var(--text-3)}
+@media (max-width:900px){
+  .pul{height:320vh}
+  .pul-pin{align-items:flex-start;padding-top:74px}
+  .pul-grid{grid-template-columns:1fr;gap:12px}
+  .pul-h{margin-bottom:6px;gap:8px}.pul-h p{display:none}.pul-h h2{font-size:1.7rem}
+  .stages{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .stg{grid-template-columns:1fr;justify-items:center;text-align:center;padding:0}.stg .dot{grid-row:auto;width:38px;height:38px}
+  .stg h3{font-size:12px;line-height:1.2}.stg p{display:none}
+  .wave{height:130px}
+  .meters{grid-template-columns:1fr}
+  .wave-legend{display:none}
+}
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-top:clamp(40px,6vw,80px)}
+.tile{grid-column:span 2;border-radius:24px;background:var(--panel);border:1px solid var(--line);padding:22px;display:grid;gap:10px;align-content:start;min-width:0}
+.tile.w3{grid-column:span 3}
+.tile .ico{--c:var(--accent-text);width:40px;height:40px}
+.tile h3{font-size:17.5px;font-weight:620;letter-spacing:-.01em}
+.tile p{font-size:15px;color:var(--text-2)}
+.tile .big{font-size:clamp(1.9rem,1.3rem + 2vw,2.8rem);font-weight:650;letter-spacing:-.04em;line-height:1;color:var(--text)}
+.tile .big small{font-size:.42em;font-weight:550;letter-spacing:0;color:var(--text-3);margin-left:4px}
+.lufs{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.lufs span{font-size:12.5px;padding:4px 10px;border-radius:99px;background:var(--panel-2);color:var(--text-2);white-space:nowrap}
+.lufs b{color:var(--text);font-weight:600}
+@media (max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.tile,.tile.w3{grid-column:span 1}.tile.w3:last-child{grid-column:1/-1}}
+@media (max-width:560px){.tiles{grid-template-columns:1fr}.tile.w3:last-child{grid-column:auto}}
+
+/* Listo para editar */
+.edit{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.code{margin:0;padding:14px 16px;border-radius:16px;background:var(--bg-alt);border:1px solid var(--line);font:12.5px/1.75 var(--mono);color:var(--text-2);overflow-x:auto}
+.code b{color:var(--accent-text);font-weight:500}.code i{font-style:normal;color:var(--text-3)}
+.code .t{color:var(--ok)}
+.takelist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.takelist li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--panel-2);border:1px solid transparent;font-size:14.5px;color:var(--text-2)}
+.takelist li.best{border-color:color-mix(in srgb,var(--accent) 60%,transparent);color:var(--text)}
+.takelist .mono{font-family:var(--mono);font-size:12.5px;color:var(--text-3)}
+.takelist svg.i{width:18px;height:18px;color:var(--text-3)}
+.takelist li.best svg.i{color:var(--accent-text);fill:var(--accent)}
+.badge{font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;color:var(--accent-text);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+@media (max-width:900px){.edit{grid-template-columns:1fr}}
+
+/* Privado */
+.priv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.priv .card{padding:26px;gap:12px}
+.priv .ico{--c:var(--ok);width:44px;height:44px;border-radius:12px}
+.priv .ico svg.i{width:22px;height:22px}
+.fine{margin-top:18px;text-align:center;color:var(--text-3);font-size:14px}
+@media (max-width:900px){.priv{grid-template-columns:1fr}}
+
+/* Instalar */
+.req{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.rq{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;padding:16px;border-radius:18px;background:var(--panel);border:1px solid var(--line);align-items:center}
+.rq .ico{grid-row:span 2;--c:var(--accent-text)}
+.rq b{font-size:15px;font-weight:600}.rq span{font-size:14px;color:var(--text-2)}
+.pasos{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:paso}
+.pasos li{counter-increment:paso;display:grid;grid-template-columns:36px minmax(0,1fr);gap:4px 14px;padding:18px;border-radius:20px;background:var(--panel);border:1px solid var(--line)}
+.pasos li::before{content:counter(paso);grid-row:span 3;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:650;font-size:15px;color:var(--on-accent);background:var(--accent)}
+.pasos b{font-size:17px;font-weight:620}
+.pasos span{font-size:15px;color:var(--text-2)}
+.pasos .ruta{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px;font-size:13.5px;color:var(--text)}
+.pasos .ruta em{font-style:normal;padding:4px 10px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line)}
+.pasos .ruta em.hl{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
+.pasos .ruta i{font-style:normal;color:var(--text-3)}
+.pasos .btn{margin-top:8px;justify-self:start}
+.note{margin-top:14px;display:flex;gap:12px;align-items:flex-start;padding:18px 20px;border-radius:20px;border:1px dashed var(--line-2);color:var(--text-2);font-size:15.5px}
+.note svg.i{color:var(--warn);margin-top:3px}
+.note b{color:var(--text)}
+.inst{max-width:820px;margin-inline:auto}
+@media (max-width:760px){.req{grid-template-columns:1fr}}
+
+/* Preguntas */
+.faq{max-width:780px;margin-inline:auto;display:grid;gap:8px}
+details{border-radius:18px;background:var(--panel);border:1px solid var(--line);transition:border-color .3s}
+details[open]{border-color:var(--line-2)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 20px;font-size:17px;font-weight:580;border-radius:18px}
+summary::-webkit-details-marker{display:none}
+summary svg.i{transition:transform .4s var(--ease);color:var(--text-3)}
+details[open] summary svg.i{transform:rotate(45deg)}
+details p{padding:0 20px 20px;color:var(--text-2);font-size:15.5px}
+.cta-end{display:grid;justify-items:center;gap:18px;text-align:center;margin-top:clamp(70px,9vw,120px)}
+.cta-end h2{max-width:14ch}
+footer{border-top:1px solid var(--line);padding-block:32px calc(40px + env(safe-area-inset-bottom,0px));color:var(--text-3);font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .ambient i:nth-child(n),.float .card,.lvl i,.eq i{animation:none}
+  .morph{transform:none;opacity:1}
+  .win{transform:none!important}
+  .w{transition:none}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/></symbol>
+    <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M2.5 9a15 15 0 0 1 4-2.6M21.5 9A15 15 0 0 0 11 5.1M5.5 12.5a10 10 0 0 1 3-1.7M18.5 12.5a10 10 0 0 0-3.2-1.8M9 16a5 5 0 0 1 6 0M12 19.5h.01M3 3l18 18"/></symbol>
+    <symbol id="i-cut" viewBox="0 0 24 24"><circle cx="6" cy="6.5" r="2.5"/><circle cx="6" cy="17.5" r="2.5"/><path d="M8 8l12 9M8 16L20 7"/></symbol>
+    <symbol id="i-filler" viewBox="0 0 24 24"><path d="M3 12h3M9 8v8M13 5v14M17 9v6M21 12h0"/><path d="M4 4l16 16"/></symbol>
+    <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.2"/><path d="M6 19.5c.8-3.3 3-5 6-5s5.2 1.7 6 5"/><path d="M3 7V4.5A1.5 1.5 0 0 1 4.5 3H7M17 3h2.5A1.5 1.5 0 0 1 21 4.5V7M21 17v2.5a1.5 1.5 0 0 1-1.5 1.5H17M7 21H4.5A1.5 1.5 0 0 1 3 19.5V17"/></symbol>
+    <symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 10v4h3.5l5 4V6l-5 4zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></symbol>
+    <symbol id="i-keep" viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="6" rx="1.5"/><path d="M5.5 9.5V19a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5V9.5M10 14h4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+    <symbol id="i-user-off" viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.2"/><path d="M6 19.5c.8-3.3 3-5 6-5s5.2 1.7 6 5M3.5 3.5l17 17"/></symbol>
+    <symbol id="i-cloud-off" viewBox="0 0 24 24"><path d="M7 18.5h9.5a4 4 0 0 0 1-7.9 5.5 5.5 0 0 0-10.4-1.6A4.8 4.8 0 0 0 7 18.5z"/><path d="M3.5 3.5l17 17"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></symbol>
+    <symbol id="i-mac" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20.5h8M12 16.5v4"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9L3.5 9.7l5.9-.8z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/></symbol>
+    <symbol id="i-words" viewBox="0 0 24 24"><path d="M4 7h5M12 7h8M4 12h8M15 12h5M4 17h3M10 17h10"/></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12h1M6 9v6M9 6v12M12 9v6M15 4v16M18 8v8M21 11v2"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 6.5A1.5 1.5 0 0 1 5 5h4.5l2 2.5H19A1.5 1.5 0 0 1 20.5 9v9A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18z"/></symbol>
+  </defs>
+</svg>
+
+<div class="ambient" aria-hidden="true"><i></i><i></i></div>
+
+<nav class="nav" aria-label="Principal">
+  <a class="brand" href="#inicio"><img src="img/favicon.png" width="28" height="28" alt="Ícono de Toma">Toma</a>
+  <div class="links" id="links">
+    <span class="ind" id="ind"></span>
+    <a href="#voz">Sigue tu voz</a><a href="#toma">Una toma</a><a href="#pulido">Pulido</a><a href="#edicion">Para editar</a><a href="#privacidad">Privacidad</a><a href="#instalar">Instalar</a>
+  </div>
+  <a class="btn pri" href="https://github.com/sebaslobo22/toma-mac/releases/latest/download/Toma.zip" data-dl><svg class="i"><use href="#i-down"/></svg>Descargar</a>
+</nav>
+
+<main id="inicio">
+  <!-- Portada -->
+  <section class="hero" id="hero">
+    <div class="wrap">
+      <div class="hero-txt" id="hero-txt">
+        <img class="app-ico" src="img/icono.png" width="84" height="84" alt="Ícono de Toma: líneas de texto con una palabra resaltada en amarillo y un botón rojo de grabar">
+        <span class="tag"><span class="dot"></span>Gratis · macOS 27 · Apple silicon</span>
+        <h1 class="grad">Lee. Graba. Toma hace el resto.</h1>
+        <p class="sub">Un <b>teleprompter y grabadora de voz para Mac</b> que sigue tu voz mientras lees y deja el audio listo para editar.</p>
+        <div class="ctas">
+          <a class="btn pri" href="https://github.com/sebaslobo22/toma-mac/releases/latest/download/Toma.zip" data-dl><svg class="i"><use href="#i-down"/></svg>Descargar para Mac</a>
+          <a class="btn ghost" href="#voz">Cómo funciona <svg class="i"><use href="#i-arrow"/></svg></a>
+        </div>
+        <p class="ver" data-ver aria-live="polite"></p>
+      </div>
+
+      <div class="hero-stage" id="hero-stage">
+        <div class="float f1" data-par="0.14"><div class="card"><span class="ico" style="--c:var(--ok)"><svg class="i"><use href="#i-wifi-off"/></svg></span><span><small>Reconocimiento</small><b>Sin internet</b></span></div></div>
+        <div class="float f2" data-par="0.22"><div class="card"><span class="ico" style="--c:var(--accent-text)"><svg class="i"><use href="#i-words"/></svg></span><span><small>Cada toma guarda</small><b>El tiempo de cada palabra</b></span></div></div>
+        <div class="float f3" data-par="0.18"><div class="card"><span class="ico" style="--c:var(--bad)"><svg class="i"><use href="#i-mic"/></svg></span><span><small>Ruido de fondo</small><b>−19 a −21 dB</b></span></div></div>
+        <div class="float f4" data-par="0.1"><div class="card"><span class="ico" style="--c:var(--ok)"><svg class="i"><use href="#i-vol"/></svg></span><span><small>Volumen para redes</small><b>−14 LUFS</b></span></div></div>
+
+        <div class="win" id="win" aria-hidden="true">
+          <div class="win-bar"><i></i><i></i><i></i><span>Toma · Voz cierres</span></div>
+          <div class="win-body">
+            <aside class="side">
+              <p class="side-h">GUION</p>
+              <div class="side-it"><svg class="i"><use href="#i-doc"/></svg>Voz cierres</div>
+              <div class="side-it sub-it on"><svg class="i"><use href="#i-film"/></svg>El avión <span class="n">· Video 1</span></div>
+              <div class="side-it sub-it"><svg class="i"><use href="#i-film"/></svg>El crucero <span class="n">· Video 2</span></div>
+              <div class="side-it sub-it"><svg class="i"><use href="#i-film"/></svg>El espacio <span class="n">· Video 3</span></div>
+            </aside>
+            <div class="tp" id="tp1">
+              <span class="crumb">Voz cierres · El avión · Video 1</span>
+              <div class="tp-text"></div>
+              <div class="tp-dots"></div>
+              <div class="glass">
+                <span class="g-mic"><svg class="i"><use href="#i-mic"/></svg><span class="lvl"><i></i></span><span class="g-ok">Bien</span></span>
+                <span class="g-rec">● Grabar · espacio</span>
+                <span class="g-vel">Velocidad: normal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sigue tu voz -->
+  <section class="sec" id="voz">
+    <div class="wrap">
+      <div class="head morph">
+        <span class="kicker"><svg class="i"><use href="#i-mic"/></svg>Sigue tu voz</span>
+        <h2 class="grad">El texto avanza contigo.</h2>
+        <p>Tú lees. Toma marca por dónde vas. No hay una velocidad que ajustar.</p>
+      </div>
+      <div class="split">
+        <div class="card big morph">
+          <h3>Sin velocidad que ajustar</h3>
+          <p>Lees a tu ritmo y la palabra amarilla te acompaña. Si vas rápido, va rápido. Si vas lento, va lento.</p>
+          <ul class="checks">
+            <li><svg class="i"><use href="#i-check"/></svg><span><b>El reconocimiento corre dentro de tu Mac.</b> Tu voz no sale de la computadora.</span></li>
+            <li><svg class="i"><use href="#i-check"/></svg><span><b>No necesita internet.</b> Funciona igual en un avión.</span></li>
+            <li><svg class="i"><use href="#i-check"/></svg><span><b>Un solo botón:</b> Grabar, o la barra espaciadora.</span></li>
+          </ul>
+        </div>
+        <div class="mini-tp morph" aria-hidden="true" id="tp2box">
+          <div class="mini-top"><span class="eq"><i></i><i></i><i></i><i></i><i></i></span><span class="chip-off"><svg class="i"><use href="#i-wifi-off"/></svg>Sin internet</span></div>
+          <div class="mini-body tp" style="display:block;padding:30px clamp(18px,3vw,34px) 30px;overflow:visible" id="tp2"><div class="tp-text"></div></div>
+          <div class="mini-foot"><div class="glass"><span class="g-mic"><svg class="i"><use href="#i-mic"/></svg><span class="lvl"><i></i></span><span class="g-ok">Bien</span></span><span class="g-rec">● Grabar · espacio</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Un video, una toma -->
+  <section class="sec" id="toma">
+    <div class="wrap">
+      <div class="head morph">
+        <span class="kicker"><svg class="i"><use href="#i-film"/></svg>Un video, una toma</span>
+        <h2 class="grad">Lee todo de corrido.</h2>
+        <p>Si te equivocas, repite la frase y sigue. No hace falta parar ni empezar de nuevo.</p>
+      </div>
+      <div class="takes">
+        <div class="script morph" id="script" aria-hidden="true">
+          <div class="srow" data-s="idle"><span class="sdot">1</span><span class="stx">Hace un año empecé a grabar videos cortos.</span><span class="stag">Bien</span></div>
+          <div class="srow" data-s="idle"><span class="sdot">2</span><span class="stx">Lo más difícil no era hablar: era recordar qué decir.</span><span class="stag">Bien</span></div>
+          <div class="srow" data-s="idle"><span class="sdot">3</span><span class="stx">Hoy leo una vez, sin parar.</span><span class="stag">Bien</span></div>
+          <div class="take-done" id="takedone"><svg class="i"><use href="#i-check"/></svg><span>Toma lista</span></div>
+        </div>
+        <div class="card morph">
+          <h3>Te equivocas, repites, sigues</h3>
+          <p>Lees el video entero en una sola toma. Si una frase sale mal, la dices otra vez y continúas. Toma se queda con lo que dijiste bien.</p>
+          <ul class="checks">
+            <li><svg class="i"><use href="#i-check"/></svg><span><b>Un video, una grabación.</b> Sin cortes a mano mientras hablas.</span></li>
+            <li><svg class="i"><use href="#i-check"/></svg><span><b>Los errores no estorban.</b> La frase repetida se limpia en el pulido.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pulido automático -->
+  <section class="pul" id="pulido" aria-labelledby="pul-h">
+    <div class="pul-pin">
+      <div class="wrap pul-grid">
+        <div>
+          <div class="pul-h">
+            <span class="kicker"><svg class="i"><use href="#i-wave"/></svg>Pulido automático</span>
+            <h2 class="grad" id="pul-h">Tu voz, lista para publicar.</h2>
+            <p>Al terminar la toma, Toma limpia el audio solo. Mira el antes y el después mientras bajas.</p>
+          </div>
+          <ol class="stages" id="stages">
+            <li class="stg on"><span class="dot"><svg class="i"><use href="#i-cut"/></svg></span><h3>Recorta los silencios</h3><p>Quita el silencio del inicio y del final y acorta las pausas largas.</p></li>
+            <li class="stg"><span class="dot"><svg class="i"><use href="#i-filler"/></svg></span><h3>Quita muletillas</h3><p>Fuera los «eh» y «mm», y las frases que repetiste.</p></li>
+            <li class="stg"><span class="dot"><svg class="i"><use href="#i-person"/></svg></span><h3>Aísla tu voz</h3><p>Usa el aislamiento de voz de Apple, el de FaceTime, y baja el ruido de fondo.</p></li>
+            <li class="stg"><span class="dot"><svg class="i"><use href="#i-vol"/></svg></span><h3>Ajusta el volumen</h3><p>Lo deja listo para redes sociales.</p></li>
+          </ol>
+        </div>
+        <div class="wave-card">
+          <div class="wave-top">
+            <span class="state" id="wstate">Original</span>
+            <span class="sw" id="sw" hidden role="group" aria-label="Ver original o pulido"><button type="button" data-v="0" aria-pressed="true">Original</button><button type="button" data-v="1" aria-pressed="false">Pulido</button></span>
+          </div>
+          <div class="wave" id="wave" role="img" aria-label="Dibujo ilustrativo de una onda de audio con ruido que se vuelve una onda limpia"></div>
+          <div class="wave-legend" aria-hidden="true"><span><i style="background:var(--text-2)"></i>Tu voz</span><span><i style="background:color-mix(in srgb,var(--text-3) 55%,transparent)"></i>Ruido</span><span><i style="background:var(--bad)"></i>Se quita</span></div>
+          <div class="meters">
+            <div class="mt"><div class="mt-h"><span>Ruido de fondo</span><b id="m-noise">Con ruido</b></div><div class="trk"><i id="m-noise-b" style="width:100%"></i></div></div>
+            <div class="mt"><div class="mt-h"><span>Volumen</span><b id="m-vol">Desigual</b></div><div class="trk"><i id="m-vol-b" style="width:0"></i><span class="mkr" id="m-mk"></span></div></div>
+          </div>
+          <div class="targets" id="targets" role="group" aria-label="Volumen de salida">
+            <button class="tg" type="button" data-t="-14" aria-pressed="true">Redes −14 LUFS</button>
+            <button class="tg" type="button" data-t="-16" aria-pressed="false">Voz en off −16</button>
+            <button class="tg" type="button" data-t="-19" aria-pressed="false">Pódcast −19</button>
+          </div>
+          <p class="ill">Dibujo ilustrativo del proceso, no es una grabación real.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" style="padding-top:0" aria-label="Qué hace el pulido">
+    <div class="wrap">
+      <div class="tiles">
+        <div class="tile morph"><span class="ico"><svg class="i"><use href="#i-cut"/></svg></span><h3>Recorta silencios</h3><p>Quita el silencio del inicio y del final y acorta las pausas largas.</p></div>
+        <div class="tile morph"><span class="ico"><svg class="i"><use href="#i-filler"/></svg></span><h3>Quita muletillas</h3><p>Borra los sonidos como «eh» y «mm» y las frases que repetiste.</p></div>
+        <div class="tile morph"><span class="ico"><svg class="i"><use href="#i-person"/></svg></span><h3>Aísla tu voz</h3><p>Usa el aislamiento de voz de Apple, el mismo de FaceTime, y quita el ruido de fondo.</p></div>
+        <div class="tile w3 morph"><span class="ico"><svg class="i"><use href="#i-vol"/></svg></span><h3>Volumen listo para redes</h3><p>Elige el destino y Toma deja el audio al nivel justo.</p><div class="lufs"><span><b>Redes</b> −14 LUFS</span><span><b>Voz en off</b> −16</span><span><b>Pódcast</b> −19</span></div></div>
+        <div class="tile w3 morph"><span class="ico"><svg class="i"><use href="#i-keep"/></svg></span><h3>El original siempre se queda</h3><p>El pulido nunca toca tu grabación. Si no te gusta el resultado, tu toma original sigue ahí, intacta.</p></div>
+        <div class="tile w3 morph"><div class="big">19–21<small>dB menos ruido</small></div><p>Es lo que bajó el ruido de fondo en las pruebas hechas en un Mac.</p></div>
+        <div class="tile w3 morph"><div class="big">&lt; 1<small>segundo por minuto de audio</small></div><p>Lo que tarda el pulido. Una toma de un minuto se pule en menos de un segundo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Listo para editar -->
+  <section class="sec" id="edicion">
+    <div class="wrap">
+      <div class="head morph">
+        <span class="kicker"><svg class="i"><use href="#i-words"/></svg>Listo para editar</span>
+        <h2 class="grad">Sales con todo para editar.</h2>
+        <p>Cada toma guarda cuándo dijiste cada palabra y cuál toma es la buena.</p>
+      </div>
+      <div class="edit">
+        <div class="card morph">
+          <h3>El tiempo de cada palabra</h3>
+          <p>Sirve para hacer subtítulos sin transcribir nada a mano. Los tiempos de abajo son un ejemplo.</p>
+          <pre class="code" aria-label="Ejemplo de palabras con su tiempo"><i>00:00,40</i>  <b>Hace</b>
+<i>00:00,71</i>  <b>un</b>
+<i>00:00,88</i>  <b>año</b>
+<i>00:01,24</i>  <b>empecé</b>
+<i>00:01,69</i>  <b>a</b>
+<i>00:01,80</i>  <b>grabar</b>  <i>…</i></pre>
+        </div>
+        <div class="card morph">
+          <h3>Cuál toma es la buena</h3>
+          <p>Si grabaste el mismo video varias veces, queda una lista que dice cuál usar.</p>
+          <ul class="takelist" aria-label="Ejemplo de lista de tomas">
+            <li><svg class="i"><use href="#i-film"/></svg><span>El avión · toma 1</span><span></span></li>
+            <li class="best"><svg class="i"><use href="#i-star"/></svg><span>El avión · toma 2</span><span class="badge">La buena</span></li>
+            <li><svg class="i"><use href="#i-film"/></svg><span>El avión · toma 3</span><span></span></li>
+          </ul>
+        </div>
+        <div class="card morph" style="grid-column:1/-1">
+          <h3>Todo en una carpeta</h3>
+          <p>Cada guion tiene su carpeta con las tomas, el guion y la lista de tomas.</p>
+          <pre class="code" aria-label="Estructura de la carpeta">~/Películas/Toma/<b>Voz cierres</b>/
+  <i>tomas/</i>          <i>las grabaciones</i>
+  <i>manifiesto.json</i>  <i>tiempos y toma buena</i>
+  <i>guion.md</i>         <i>tu guion</i></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privado -->
+  <section class="sec" id="privacidad" style="padding-top:0">
+    <div class="wrap">
+      <div class="head morph">
+        <span class="kicker"><svg class="i"><use href="#i-lock"/></svg>Privada por diseño</span>
+        <h2 class="grad">Todo se queda en tu Mac.</h2>
+        <p>Tu voz y tus guiones son tuyos. Toma no tiene dónde mandarlos.</p>
+      </div>
+      <div class="priv">
+        <div class="card morph"><span class="ico"><svg class="i"><use href="#i-user-off"/></svg></span><h3>Sin cuentas</h3><p>No te registras, no inicias sesión. La abres y la usas.</p></div>
+        <div class="card morph"><span class="ico"><svg class="i"><use href="#i-cloud-off"/></svg></span><h3>Sin nube</h3><p>Las grabaciones y los guiones viven en tu disco. Nada se sube a ningún servidor.</p></div>
+        <div class="card morph"><span class="ico"><svg class="i"><use href="#i-lock"/></svg></span><h3>Sin analítica</h3><p>Toma no mide lo que haces ni manda datos de uso a nadie.</p></div>
+      </div>
+      <p class="fine">Esta página solo le pregunta a GitHub cuál es la versión más nueva.</p>
+    </div>
+  </section>
+
+  <!-- Instalar -->
+  <section class="sec" id="instalar" style="padding-top:0">
+    <div class="wrap inst">
+      <div class="head morph">
+        <span class="kicker"><svg class="i"><use href="#i-down"/></svg>Requisitos e instalación</span>
+        <h2 class="grad">Instálala en cuatro pasos.</h2>
+        <p>Toma todavía no está notarizada por Apple. Por eso macOS te pedirá un permiso extra la primera vez.</p>
+      </div>
+      <div class="req morph">
+        <div class="rq"><span class="ico"><svg class="i"><use href="#i-chip"/></svg></span><b>Apple silicon</b><span>Un Mac con chip M1 o más nuevo</span></div>
+        <div class="rq"><span class="ico"><svg class="i"><use href="#i-mac"/></svg></span><b>macOS 27</b><span>O una versión más reciente</span></div>
+        <div class="rq"><span class="ico"><svg class="i"><use href="#i-mic"/></svg></span><b>Un micrófono</b><span>El de tu Mac sirve</span></div>
+      </div>
+      <ol class="pasos">
+        <li class="morph"><b>Descarga y arrastra</b><span>Descarga el zip y ábrelo con doble clic. Arrastra Toma a la carpeta Aplicaciones.</span><a class="btn pri" href="https://github.com/sebaslobo22/toma-mac/releases/latest/download/Toma.zip" data-dl><svg class="i"><use href="#i-down"/></svg>Descargar Toma.zip</a></li>
+        <li class="morph"><b>Ábrela desde Aplicaciones</b><span>macOS dirá que no puede verificar al desarrollador. Es normal: todavía no está notarizada. Cierra ese aviso.</span></li>
+        <li class="morph"><b>Dale permiso una vez</b><span>Abre Ajustes del Sistema y busca el aviso de Toma:</span><span class="ruta"><em>Ajustes del Sistema</em><i>›</i><em>Privacidad y seguridad</em><i>›</i><em class="hl">Abrir igualmente</em></span></li>
+        <li class="morph"><b>Permite el micrófono</b><span>Cuando Toma lo pida, permite el micrófono y el reconocimiento de voz. Sin eso no puede oírte ni seguir tu voz.</span></li>
+      </ol>
+      <div class="note morph"><svg class="i"><use href="#i-alert"/></svg><span><b>Esto pasa solo la primera vez.</b> Después de «Abrir igualmente», Toma se abre como cualquier otra app.</span></div>
+    </div>
+  </section>
+
+  <!-- Preguntas -->
+  <section class="sec" id="preguntas" style="padding-top:0">
+    <div class="wrap">
+      <div class="head morph"><span class="kicker">Preguntas frecuentes</span><h2 class="grad">Lo que suelen preguntar.</h2></div>
+      <div class="faq">
+        <details class="morph"><summary>¿Cuesta dinero?<svg class="i"><use href="#i-plus"/></svg></summary><p>No. Toma es gratis.</p></details>
+        <details class="morph"><summary>¿Necesita internet?<svg class="i"><use href="#i-plus"/></svg></summary><p>No. El reconocimiento de voz y el pulido corren dentro de tu Mac. Solo necesitas internet para descargarla.</p></details>
+        <details class="morph"><summary>¿Dónde quedan mis grabaciones?<svg class="i"><use href="#i-plus"/></svg></summary><p>En la carpeta Películas › Toma, dentro de una carpeta con el nombre de tu guion.</p></details>
+        <details class="morph"><summary>¿Cómo la actualizo?<svg class="i"><use href="#i-plus"/></svg></summary><p>Descárgala otra vez desde esta página. Aquí siempre está la versión más nueva. Arrastra la nueva a Aplicaciones y reemplaza la anterior.</p></details>
+      </div>
+      <div class="cta-end morph">
+        <h2 class="grad">Lee. Graba. Listo.</h2>
+        <a class="btn pri" href="https://github.com/sebaslobo22/toma-mac/releases/latest/download/Toma.zip" data-dl><svg class="i"><use href="#i-down"/></svg>Descargar para Mac</a>
+        <p class="ver" data-ver></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><span>Hecha por Sebastián Lobo</span><span>Toma <span data-ver-short>para Mac</span></span></div>
+</footer>
+
+<script>
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var clamp = function (v, a, b) { a = a === undefined ? 0 : a; b = b === undefined ? 1 : b; return Math.min(b, Math.max(a, v)); };
+  var lerp = function (a, b, t) { return a + (b - a) * t; };
+  var ease = function (t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  var seg = function (p, a, b) { return clamp((p - a) / (b - a)); };
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var vh = innerHeight;
+
+  /* ---------- Bucle con pausa fuera de pantalla ---------- */
+  // Corre fn(ms) solo mientras el elemento se ve y la pestaña está abierta. Con movimiento reducido pinta un cuadro fijo.
+  function loop(el, fn, still) {
+    var raf = 0, t0 = 0, seen = false, last = 0;
+    function tick(now) { if (!t0) t0 = now - last; last = now - t0; fn(last); raf = requestAnimationFrame(tick); }
+    function sync() {
+      var go = seen && !document.hidden && !reduce;
+      if (go && !raf) { t0 = 0; raf = requestAnimationFrame(tick); el.classList.remove("paused"); }
+      if (!go && raf) { cancelAnimationFrame(raf); raf = 0; el.classList.add("paused"); }
+    }
+    if (reduce) { fn(still); el.classList.add("paused"); return; }
+    new IntersectionObserver(function (es) { seen = es[es.length - 1].isIntersecting; sync(); }, { rootMargin: "80px" }).observe(el);
+    document.addEventListener("visibilitychange", sync);
+  }
+
+  /* ---------- Teleprompter que sigue la voz ---------- */
+  function follow(root, paras, hold) {
+    var box = $(".tp-text", root), dotsBox = $(".tp-dots", root), words = [], sent = [], starts = [], t = 0, si = 0, sentOfPara = [];
+    paras.forEach(function (txt) {
+      var p = document.createElement("p");
+      txt.split(" ").forEach(function (w, i, arr) {
+        var s = document.createElement("span"); s.className = "w"; s.textContent = w;
+        p.appendChild(s); if (i < arr.length - 1) p.appendChild(document.createTextNode(" "));
+        words.push(s); sent.push(si); starts.push(t);
+        t += 170 + w.length * 52 + (/[.:]$/.test(w) ? 420 : /,$/.test(w) ? 170 : 0);
+        if (/[.:]$/.test(w) && i < arr.length - 1) si++;
+      });
+      si++; box.appendChild(p);
+    });
+    var total = t, dots = [];
+    if (dotsBox) for (var d = 0; d < si; d++) { var e = document.createElement("i"); dotsBox.appendChild(e); dots.push(e); }
+    var cur = -2;
+    function show(i) {
+      if (i === cur) return; cur = i;
+      words.forEach(function (w, k) { w.className = "w" + (k < i ? " done" : k === i ? " cur" : ""); });
+      var s = i >= 0 ? sent[i] : -1;
+      dots.forEach(function (e, k) { e.className = k === s ? "on" : k < s ? "past" : ""; });
+    }
+    return function (ms) {
+      var x = ms % (total + hold), i = -1;
+      if (x >= total) i = words.length;           // fin: todo leído, se espera antes de repetir
+      else for (var k = 0; k < starts.length; k++) { if (starts[k] <= x) i = k; else break; }
+      show(i);
+    };
+  }
+  var f1 = follow($("#tp1"), ["Hace un año empecé a grabar videos cortos. Lo más difícil no era hablar: era recordar qué decir.", "Hoy leo una sola vez, sin parar, y Toma sigue mi voz."], 2200);
+  loop($("#hero-stage"), f1, 3300);        // con movimiento reducido queda congelada a mitad del texto
+  var f2 = follow($("#tp2"), ["Leo a mi ritmo. El texto avanza conmigo, palabra por palabra."], 2000);
+  loop($("#tp2box"), f2, 1300);
+
+  /* ---------- Una toma: leer, equivocarse, repetir ---------- */
+  var rows = $$("#script .srow"), done = $("#takedone");
+  function setRow(r, s, fill) { if (r.dataset.s !== s) r.dataset.s = s; r.style.setProperty("--fill", fill); }
+  function take(ms) {
+    var t = ms % 11000, tag = rows[1].querySelector(".stag");
+    // 0 a 1,6 s: frase 1.  1,8 a 3,6: frase 2 con tropiezo.  4,6 a 6,4: repite.  6,8 a 8,3: frase 3.
+    setRow(rows[0], t < 100 ? "idle" : t < 1600 ? "read" : "ok", t < 100 ? 0 : clamp((t - 100) / 1500));
+    if (t < 1800) setRow(rows[1], "idle", 0);
+    else if (t < 3600) setRow(rows[1], "read", clamp((t - 1800) / 1800) * .55);
+    else if (t < 4600) { setRow(rows[1], "err", .55); tag.textContent = "Me trabé"; }
+    else if (t < 6400) { setRow(rows[1], "rep", clamp((t - 4600) / 1800)); tag.textContent = "Repito la frase"; }
+    else { setRow(rows[1], "ok", 1); tag.textContent = "Bien"; }
+    if (t < 6800) setRow(rows[2], "idle", 0);
+    else if (t < 8300) setRow(rows[2], "read", clamp((t - 6800) / 1500));
+    else setRow(rows[2], "ok", 1);
+    var ok = t >= 8600;
+    done.classList.toggle("on", ok);
+  }
+  loop($("#script"), take, 9000);
+
+  /* ---------- Pulido: onda con ruido que se vuelve onda limpia ---------- */
+  var wave = $("#wave"), bars = [], unit = 6;
+  var plan = [["sil", 7], ["sp", 10], ["pause", 6], ["sp", 9], ["fill", 3], ["sp", 10], ["rep", 8], ["sp", 11], ["pause", 5], ["sp", 9], ["sil", 8]];
+  (function build() {
+    var seed = 7, rnd = function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    var n = 0, gain = .8;
+    plan.forEach(function (g) {
+      if (g[0] === "sp" || g[0] === "rep") gain = .5 + rnd() * .5;
+      for (var i = 0; i < g[1]; i++) {
+        var type = g[0], env = Math.abs(Math.sin(n * .73 + 1)) * (.55 + .45 * rnd()), speech = type === "sp" || type === "rep" || type === "fill";
+        var s = speech ? (.18 + .8 * env) * (type === "fill" ? .55 : 1) : 0;
+        var b = document.createElement("div"); b.className = "bar";
+        b.innerHTML = '<i class="nz"></i><i class="vc"></i>';
+        wave.appendChild(b);
+        bars.push({ el: b, nz: b.firstChild, vc: b.lastChild, type: type, s: s * gain, sn: speech ? .24 + .56 * env * .7 + .14 : 0, n: .09 + .16 * rnd() });
+        n++;
+      }
+    });
+  })();
+  function sizeBars() { unit = Math.max(3, Math.min(10, (wave.clientWidth - 20) / bars.length)); }
+  var stageEls = $$("#stages .stg"), wstate = $("#wstate"), targetV = -14, lastP = -1;
+  var noiseT = $("#m-noise"), noiseB = $("#m-noise-b"), volT = $("#m-vol"), volB = $("#m-vol-b"), mk = $("#m-mk");
+  function polish(p) {
+    p = clamp(p); if (p === lastP) return; lastP = p;
+    var e0 = ease(seg(p, .02, .24)), e1 = ease(seg(p, .27, .49)), e2 = ease(seg(p, .52, .74)), e3 = ease(seg(p, .77, .98));
+    wave.style.setProperty("--k", e2.toFixed(3));
+    var bw = 100 / 10;
+    bars.forEach(function (b) {
+      var w = 1, h, v;
+      if (b.type === "sil") w = 1 - e0;
+      else if (b.type === "pause") w = lerp(1, .5, e0);
+      else if (b.type === "fill" || b.type === "rep") w = 1 - e1;
+      v = b.s ? lerp(b.s, b.sn, e3) : 0;
+      var nz = b.n * (1 - .93 * e2);
+      h = Math.min(.96, v + nz * (b.s ? .9 : 1.15));
+      b.el.style.flexBasis = (w * unit).toFixed(2) + "px";
+      b.nz.style.height = (Math.max(.012, h) * 100).toFixed(1) + "%";
+      b.vc.style.height = (v ? Math.max(.02, v) * 100 : 0).toFixed(1) + "%";
+      var mark = (b.type === "fill" || b.type === "rep") && e1 > .02;
+      if (mark !== b.mark) { b.mark = mark; b.el.classList.toggle("mk", mark); }
+    });
+    var st = p < .26 ? 0 : p < .51 ? 1 : p < .76 ? 2 : 3;
+    stageEls.forEach(function (s, i) { s.classList.toggle("on", i === st); s.classList.toggle("past", i < st); });
+    var fin = p > .985;
+    wstate.textContent = fin ? "Pulido" : p < .02 ? "Original" : "Puliendo…";
+    wstate.classList.toggle("ok", fin);
+    noiseB.style.width = lerp(100, 8, e2).toFixed(1) + "%";
+    noiseT.textContent = e2 > .98 ? "−19 a −21 dB" : e2 < .02 ? "Con ruido" : "Bajando…";
+    noiseT.classList.toggle("ok", e2 > .98);
+    volB.style.width = lerp(38, 100, e3).toFixed(1) + "%";
+    mk.style.opacity = e3.toFixed(2); mk.style.left = lerp(10, tpos(targetV), e3).toFixed(1) + "%";
+    volT.textContent = e3 > .98 ? "−" + Math.abs(targetV) + " LUFS" : e3 < .02 ? "Desigual" : "Ajustando…";
+    volT.classList.toggle("ok", e3 > .98);
+  }
+  function tpos(v) { return (v + 24) / 14 * 100; }
+  var wsw = $("#sw");
+  $$("#targets .tg").forEach(function (b) {
+    b.addEventListener("click", function () {
+      targetV = +b.dataset.t;
+      $$("#targets .tg").forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+      lastP = -1; polish(reduce ? manual : progress("#pulido"));
+    });
+  });
+  var manual = 0;
+  if (reduce) {
+    wsw.hidden = false;
+    $$("button", wsw).forEach(function (b) {
+      b.addEventListener("click", function () {
+        manual = +b.dataset.v;
+        $$("button", wsw).forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+        polish(manual);
+      });
+    });
+  }
+  function progress(sel) { var el = $(sel), r = el.getBoundingClientRect(); return clamp(-r.top / (r.height - vh)); }
+
+  /* ---------- Portada y revelado al hacer scroll ---------- */
+  var win = $("#win"), heroTxt = $("#hero-txt"), pars = $$("[data-par]"), morphs = $$(".morph");
+  function pIn(el) { var r = el.getBoundingClientRect(); return clamp((vh - r.top) / (vh * .5)); }
+  function visible(el) { var r = el.getBoundingClientRect(); return r.bottom > -vh * .5 && r.top < vh * 1.5; }
+  function hero() {
+    if (reduce) return;
+    var p = clamp(scrollY / (vh * .8)), e = ease(p), q = clamp(scrollY / (vh * .9));
+    win.style.transform = "rotateX(" + lerp(20, 0, e).toFixed(2) + "deg) scale(" + lerp(.9, 1, e).toFixed(4) + ")";
+    heroTxt.style.opacity = (1 - q * .9).toFixed(3);
+    heroTxt.style.transform = "translate3d(0," + (-scrollY * .2).toFixed(1) + "px,0) scale(" + (1 - q * .05).toFixed(4) + ")";
+    if (scrollY < vh * 1.4) pars.forEach(function (el) { el.style.transform = "translate3d(0," + (-scrollY * (+el.dataset.par)).toFixed(1) + "px,0)"; });
+  }
+
+  /* ---------- Navegación con indicador deslizante ---------- */
+  var links = $$("#links a"), ind = $("#ind"), secs = links.map(function (a) { return $(a.getAttribute("href")); }), lastNav = -2;
+  function nav() {
+    var on = -1;
+    secs.forEach(function (s, i) { var r = s.getBoundingClientRect(); if (r.top < vh * .45 && r.bottom > vh * .3) on = i; });
+    if (on === lastNav) return; lastNav = on;
+    links.forEach(function (a, i) { a.classList.toggle("on", i === on); });
+    if (on < 0) { ind.style.opacity = 0; return; }
+    var a = links[on]; ind.style.opacity = 1; ind.style.width = a.offsetWidth + "px"; ind.style.transform = "translateX(" + a.offsetLeft + "px)";
+  }
+
+  var ticking = false;
+  function frame() {
+    hero();
+    morphs.forEach(function (m) { if (visible(m)) m.style.setProperty("--r", ease(pIn(m)).toFixed(4)); });
+    var pe = $("#pulido"), r = pe.getBoundingClientRect();
+    if (r.bottom > -vh && r.top < vh * 2) polish(reduce ? manual : progress("#pulido"));
+    nav();
+  }
+  addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; frame(); }); } }, { passive: true });
+  addEventListener("resize", function () { vh = innerHeight; lastNav = -2; sizeBars(); lastP = -1; frame(); });
+  sizeBars(); frame();
+  if (reduce) morphs.forEach(function (m) { m.style.setProperty("--r", 1); });
+
+  /* ---------- Versión: se lee de GitHub; si falla, no se muestra nada ---------- */
+  (function () {
+    try {
+      fetch("https://api.github.com/repos/sebaslobo22/toma-mac/releases/latest", { headers: { Accept: "application/vnd.github+json" } })
+        .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .then(function (j) {
+          if (!j || !j.tag_name) return;
+          var tag = String(j.tag_name), num = /^v/i.test(tag) ? tag : "v" + tag, fecha = "";
+          try { fecha = new Date(j.published_at).toLocaleDateString("es", { day: "numeric", month: "long", year: "numeric" }); if (/invalid/i.test(fecha)) fecha = ""; } catch (e) {}
+          var txt = "Versión " + num.replace(/^v/i, "") + (fecha ? " · " + fecha : "");
+          $$("[data-ver]").forEach(function (e) { e.textContent = txt; });
+          $$("[data-ver-short]").forEach(function (e) { e.textContent = num; });
+        })
+        .catch(function () {});
+    } catch (e) {}
+  })();
+})();
+</script>
+</body>
+</html>
